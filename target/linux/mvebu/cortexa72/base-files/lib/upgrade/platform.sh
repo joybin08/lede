@@ -9,8 +9,13 @@ REQUIRE_IMAGE_METADATA=1
 
 platform_check_image() {
 	case "$(board_name)" in
-	marvell,armada8040-mcbin)
-		platform_check_image_sdcard "$1"
+	globalscale,mochabin|\
+	iei,puzzle-m901|\
+	iei,puzzle-m902|\
+	marvell,armada8040-mcbin-doubleshot|\
+	marvell,armada8040-mcbin-singleshot|\
+	marvell,armada8040-clearfog-gt-8k)
+		legacy_sdcard_check_image "$1"
 		;;
 	*)
 		return 0
@@ -20,8 +25,15 @@ platform_check_image() {
 
 platform_do_upgrade() {
 	case "$(board_name)" in
-	marvell,armada8040-mcbin)
-		platform_do_upgrade_sdcard "$1"
+	iei,puzzle-m901|\
+	iei,puzzle-m902)
+		platform_do_upgrade_emmc "$1"
+		;;
+	globalscale,mochabin|\
+	marvell,armada8040-mcbin-doubleshot|\
+	marvell,armada8040-mcbin-singleshot|\
+	marvell,armada8040-clearfog-gt-8k)
+		legacy_sdcard_do_upgrade "$1"
 		;;
 	*)
 		default_do_upgrade "$1"
@@ -30,8 +42,13 @@ platform_do_upgrade() {
 }
 platform_copy_config() {
 	case "$(board_name)" in
-	marvell,armada8040-mcbin)
-		platform_copy_config_sdcard
+	globalscale,mochabin|\
+	iei,puzzle-m901|\
+	iei,puzzle-m902|\
+	marvell,armada8040-mcbin-doubleshot|\
+	marvell,armada8040-mcbin-singleshot|\
+	marvell,armada8040-clearfog-gt-8k)
+		legacy_sdcard_copy_config
 		;;
 	esac
 }

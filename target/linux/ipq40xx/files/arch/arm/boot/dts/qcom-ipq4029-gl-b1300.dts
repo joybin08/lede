@@ -121,18 +121,18 @@
 		compatible = "gpio-leds";
 
 		power: power {
-			label = "gl-b1300:green:power";
+			label = "green:power";
 			gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
 			default-state = "on";
 		};
 
 		mesh {
-			label = "gl-b1300:green:mesh";
+			label = "green:mesh";
 			gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
 		};
 
 		wlan {
-			label = "gl-b1300:green:wlan";
+			label = "green:wlan";
 			gpios = <&tlmm 2 GPIO_ACTIVE_HIGH>;
 		};
 	};
@@ -208,6 +208,17 @@
 				label = "ART";
 				reg = <0x170000 0x10000>;
 				read-only;
+				compatible = "nvmem-cells";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				precal_art_1000: precal@1000 {
+					reg = <0x1000 0x2f20>;
+				};
+
+				precal_art_5000: precal@5000 {
+					reg = <0x5000 0x2f20>;
+				};
 			};
 
 			firmware@180000 {
@@ -271,10 +282,14 @@
 
 &wifi0 {
 	status = "okay";
+	nvmem-cell-names = "pre-calibration";
+	nvmem-cells = <&precal_art_1000>;
 	qcom,ath10k-calibration-variant = "GL-B1300";
 };
 
 &wifi1 {
 	status = "okay";
+	nvmem-cell-names = "pre-calibration";
+	nvmem-cells = <&precal_art_5000>;
 	qcom,ath10k-calibration-variant = "GL-B1300";
 };

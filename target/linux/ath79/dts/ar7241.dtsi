@@ -36,6 +36,9 @@
 		phys = <&usb_phy>;
 
 		status = "disabled";
+
+		#address-cells = <1>;
+		#size-cells = <0>;
 	};
 };
 
@@ -77,6 +80,8 @@
 };
 
 &eth1 {
+	status = "okay";
+
 	compatible = "qca,ar7241-eth", "syscon";
 
 	pll-data = <0x00110000 0x00001099 0x00991099>;

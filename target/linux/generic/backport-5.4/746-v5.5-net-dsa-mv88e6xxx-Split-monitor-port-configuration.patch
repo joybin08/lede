@@ -19,7 +19,7 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 
 --- a/drivers/net/dsa/mv88e6xxx/chip.c
 +++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -2378,7 +2378,14 @@ static int mv88e6xxx_setup_upstream_port
+@@ -2394,7 +2394,14 @@ static int mv88e6xxx_setup_upstream_port
  
  		if (chip->info->ops->set_egress_port) {
  			err = chip->info->ops->set_egress_port(chip,

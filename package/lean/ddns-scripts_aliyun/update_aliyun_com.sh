@@ -17,6 +17,7 @@
 [ -z "$password" ] && write_log 14 "配置错误！保存阿里云API访问密钥的'密码'不能为空"
 
 # 检查外部调用工具
+WGET_SSL='wget'
 [ -n "$WGET_SSL" ] || write_log 13 "使用阿里云API需要 GNU Wget 支持，请先安装"
 command -v sed >/dev/null 2>&1 || write_log 13 "使用阿里云API需要 sed 支持，请先安装"
 command -v openssl >/dev/null 2>&1 || write_log 13 "使用阿里云API需要 openssl-util 支持，请先安装"
@@ -198,7 +199,7 @@ enable_domain() {
 # 获取子域名解析记录列表
 describe_domain() {
 	local count value; local ret=0
-	aliyun_transfer "Action=DescribeSubDomainRecords" "SubDomain=${__HOST}.${__DOMAIN}" || write_log 14 "服务器通信失败"
+	aliyun_transfer "Action=DescribeSubDomainRecords" "SubDomain=${__HOST}.${__DOMAIN}"  "DomainName=${__DOMAIN}" "Line=default" || write_log 14 "服务器通信失败"
 	write_log 7 "获取到解析记录: $(cat "$DATFILE" 2> /dev/null)" 
 	json_cleanup; json_load "$(cat "$DATFILE" 2> /dev/null)" >/dev/null 2>&1
 	json_get_var count "TotalCount"

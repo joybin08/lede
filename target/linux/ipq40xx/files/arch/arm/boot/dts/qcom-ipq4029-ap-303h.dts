@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0 OR MIT
+// SPDX-License-Identifier: GPL-2.0-only OR MIT
 
 #include "qcom-ipq4019.dtsi"
 #include <dt-bindings/gpio/gpio.h>
@@ -108,34 +108,34 @@
 		compatible = "gpio-leds";
 
 		wifi_green {
-			label = "ap-303h:green:wifi";
+			label = "green:wifi";
 			gpios = <&tlmm 27 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "phy0tpt";
 		};
 
 		wifi_amber {
-			label = "ap-303h:amber:wifi";
+			label = "amber:wifi";
 			gpios = <&tlmm 28 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "phy1tpt";
 		};
 
 		pse {
-			label = "ap-303h:green:pse";
+			label = "green:pse";
 			gpios = <&tlmm 42 GPIO_ACTIVE_HIGH>;
 		};
 
 		led_system_red: system_red {
-			label = "ap-303h:red:system";
+			label = "red:system";
 			gpios = <&tlmm 25 GPIO_ACTIVE_HIGH>;
 		};
 
 		led_system_green: system_green {
-			label = "ap-303h:green:system";
+			label = "green:system";
 			gpios = <&tlmm 24 GPIO_ACTIVE_HIGH>;
 		};
 
 		led_system_amber: system_amber {
-			label = "ap-303h:amber:system";
+			label = "amber:system";
 			gpios = <&tlmm 26 GPIO_ACTIVE_HIGH>;
 		};
 	};
@@ -325,6 +325,17 @@
 				label = "ART";
 				reg = <0x1f0000 0x10000>;
 				read-only;
+				compatible = "nvmem-cells";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				precal_art_1000: precal@1000 {
+					reg = <0x1000 0x2f20>;
+				};
+
+				precal_art_5000: precal@5000 {
+					reg = <0x5000 0x2f20>;
+				};
 			};
 
 			partition@1f0000 {
@@ -349,6 +360,13 @@
 				label = "mfginfo";
 				reg = <0x390000 0x10000>;
 				read-only;
+				compatible = "nvmem-cells";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				macaddr_mfginfo_1d: macaddr@1d {
+					reg = <0x1d 0x6>;
+				};
 			};
 
 			partition@3a0000 {
@@ -413,9 +431,16 @@
 &wifi0 {
 	status = "okay";
 	qcom,ath10k-calibration-variant = "Aruba-AP-303";
+	nvmem-cell-names = "pre-calibration", "mac-address";
+	nvmem-cells = <&precal_art_1000>, <&macaddr_mfginfo_1d>;
+	qcom,ath10k-calibration-variant = "Aruba-AP-303";
 };
 
 &wifi1 {
 	status = "okay";
+	qcom,ath10k-calibration-variant = "Aruba-AP-303";
+	nvmem-cell-names = "pre-calibration", "mac-address";
+	nvmem-cells = <&precal_art_5000>, <&macaddr_mfginfo_1d>;
+	mac-address-increment = <1>;
 	qcom,ath10k-calibration-variant = "Aruba-AP-303";
 };

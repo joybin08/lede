@@ -78,27 +78,27 @@
 		compatible = "gpio-leds";
 
 		power: orange {
-			label = "eap1300:orange:power";
+			label = "orange:power";
 			gpios = <&tlmm 58 GPIO_ACTIVE_LOW>;
 		};
 
 		lan {
-			label = "eap1300:blue:lan";
+			label = "blue:lan";
 			gpios = <&tlmm 2 GPIO_ACTIVE_HIGH>;
 		};
 
 		mesh {
-			label = "eap1300:blue:mesh";
+			label = "blue:mesh";
 			gpios = <&tlmm 1 GPIO_ACTIVE_HIGH>;
 		};
 
 		wlan2g {
-			label = "eap1300:blue:wlan2g";
+			label = "blue:wlan2g";
 			gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
 		};
 
 		wlan5g {
-			label = "eap1300:yellow:wlan5g";
+			label = "yellow:wlan5g";
 			gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
 		};
 	};
@@ -188,6 +188,17 @@
 				label = "0:ART";
 				reg = <0x00180000 0x00010000>;
 				read-only;
+				compatible = "nvmem-cells";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				precal_art_1000: precal@1000 {
+					reg = <0x1000 0x2f20>;
+				};
+
+				precal_art_5000: precal@5000 {
+					reg = <0x5000 0x2f20>;
+				};
 			};
 			partition8@190000 {
 				compatible = "denx,fit";
@@ -226,10 +237,14 @@
 
 &wifi0 {
 	status = "okay";
+	nvmem-cell-names = "pre-calibration";
+	nvmem-cells = <&precal_art_1000>;
 	qcom,ath10k-calibration-variant = "EnGenius-EAP1300";
 };
 
 &wifi1 {
 	status = "okay";
+	nvmem-cell-names = "pre-calibration";
+	nvmem-cells = <&precal_art_5000>;
 	qcom,ath10k-calibration-variant = "EnGenius-EAP1300";
 };

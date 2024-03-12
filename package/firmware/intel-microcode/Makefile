@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=intel-microcode
-PKG_VERSION:=20190918
+PKG_VERSION:=20230512
 PKG_RELEASE:=1
 
-PKG_SOURCE:=intel-microcode_3.$(PKG_VERSION).$(PKG_RELEASE).tar.xz
-PKG_SOURCE_URL:=http://ftp.debian.org/debian/pool/non-free/i/intel-microcode/
-PKG_HASH:=b7ecb5dd30d71e9b3c2ab184693a876171392e0d80d138c3560c662e5f2a2247
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-3.$(PKG_VERSION).$(PKG_RELEASE)
+PKG_SOURCE:=intel-microcode_3.$(PKG_VERSION).1.tar.xz
+PKG_SOURCE_URL:=@DEBIAN/pool/non-free-firmware/i/intel-microcode/
+PKG_HASH:=e6717a42d7b6e92280565fbb180cd0d11bc5d14874ef06ff1bed2b7a11d17c67
+PKG_BUILD_DIR:=$(BUILD_DIR)/intel-microcode-3.$(PKG_VERSION).1
 
 PKG_BUILD_DEPENDS:=iucode-tool/host
 
@@ -23,6 +23,8 @@ ifdef CONFIG_TARGET_x86_64
 else
 	MICROCODE:="intel-microcode"
 endif
+
+PKG_FLAGS:=nonshared
 
 include $(INCLUDE_DIR)/package.mk
 

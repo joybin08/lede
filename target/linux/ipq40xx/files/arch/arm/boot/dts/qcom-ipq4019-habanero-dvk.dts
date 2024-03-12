@@ -103,24 +103,24 @@
 		compatible = "gpio-leds";
 
 		led_status: status {
-			label = "habanero-dvk:green:status";
+			label = "green:status";
 			gpios = <&tlmm 37 GPIO_ACTIVE_HIGH>;
 			panic-indicator;
 		};
 
 		led_upgrade: upgrade {
-			label = "habanero-dvk:green:upgrade";
+			label = "green:upgrade";
 			gpios = <&tlmm 40 GPIO_ACTIVE_HIGH>;
 		};
 
 		wlan2g {
-			label = "habanero-dvk:green:wlan2g";
+			label = "green:wlan2g";
 			gpios = <&tlmm 46 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "phy0tpt";
 		};
 
 		wlan5g {
-			label = "habanero-dvk:green:wlan5g";
+			label = "green:wlan5g";
 			gpios = <&tlmm 48 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "phy1tpt";
 		};
@@ -284,6 +284,17 @@
 				label = "ART";
 				reg = <0x00170000 0x00010000>;
 				read-only;
+				compatible = "nvmem-cells";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				precal_art_1000: precal@1000 {
+					reg = <0x1000 0x2f20>;
+				};
+
+				precal_art_5000: precal@5000 {
+					reg = <0x5000 0x2f20>;
+				};
 			};
 			partition@180000 {
 				label = "cfg";
@@ -334,13 +345,15 @@
 
 &wifi0 {
 	status = "okay";
-
+	nvmem-cell-names = "pre-calibration";
+	nvmem-cells = <&precal_art_1000>;
 	qcom,ath10k-calibration-variant = "8devices-Habanero";
 };
 
 &wifi1 {
 	status = "okay";
-
+	nvmem-cell-names = "pre-calibration";
+	nvmem-cells = <&precal_art_5000>;
 	qcom,ath10k-calibration-variant = "8devices-Habanero";
 };
 
