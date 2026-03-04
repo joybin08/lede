@@ -16,7 +16,7 @@ define Build/boot-common
 	rm -fR $@.boot
 	mkdir -p $@.boot
 
-	$(CP) $(DTS_DIR)/$(DEVICE_DTS).dtb $@.boot/rockchip.dtb
+	$(CP) $(KDIR)/image-$(firstword $(notdir $(DEVICE_DTS))).dtb $@.boot/rockchip.dtb
 	$(CP) $(IMAGE_KERNEL) $@.boot/kernel.img
 endef
 
@@ -70,12 +70,9 @@ define Device/Default
   PROFILES := Default
   KERNEL := kernel-bin
   IMAGES := sysupgrade.img.gz
-  DEVICE_DTS = rockchip/$$(SOC)-$(lastword $(subst _, ,$(1)))
+  DEVICE_DTS_DIR = $$(DTS_DIR)/rockchip
+  DEVICE_DTS = $$(SOC)-$(lastword $(subst _, ,$(1)))
 endef
-
-ifdef CONFIG_LINUX_6_1
-  DTS_CPPFLAGS += -DDTS_NO_LEGACY
-endif
 
 include $(SUBTARGET).mk
 

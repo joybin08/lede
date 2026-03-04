@@ -22,7 +22,6 @@
 		stdout-path = "serial2:1500000n8";
 	};
 
-#ifdef DTS_NO_LEGACY
 	hdmi-con {
 		compatible = "hdmi-connector";
 		type = "a";
@@ -33,7 +32,6 @@
 			};
 		};
 	};
-#endif
 
 	keys {
 		compatible = "gpio-keys";
@@ -98,31 +96,22 @@
 		vin-supply = <&vcc12v_dcin>;
 	};
 
-	vcc5v0_usb: vcc5v0-usb {
-		compatible = "regulator-fixed";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		regulator-name = "vcc5v0_usb";
-		vin-supply = <&vcc12v_dcin>;
-	};
-
-	vcc5v0_usb_host: vcc5v0-usb-host {
+	vcc5v0_usb_otg: vcc5v0-usb-otg {
 		compatible = "regulator-fixed";
 		enable-active-high;
 		gpio = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&vcc5v0_usb_host_en>;
+		pinctrl-0 = <&vcc5v0_usb_otg_en>;
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
-		regulator-name = "vcc5v0_usb_host";
-		vin-supply = <&vcc5v0_usb>;
+		regulator-name = "vcc5v0_usb_otg";
+		vin-supply = <&vcc5v0_sys>;
 	};
 
 	vcc3v3_pcie: vcc3v3-pcie {
 		compatible = "regulator-fixed";
 		enable-active-high;
+		gpio = <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 		regulator-name = "vcc3v3_pcie";
@@ -130,7 +119,7 @@
 		vin-supply = <&vcc5v0_sys>;
 	};
 
-	rk809-sound {
+	sound {
 		compatible = "simple-audio-card";
 		simple-audio-card,format = "i2s";
 		simple-audio-card,name = "Analog RK809";
@@ -142,13 +131,6 @@
 		simple-audio-card,codec {
 			sound-dai = <&rk809>;
 		};
-	};
-
-	pwm-fan {
-		compatible = "pwm-fan";
-		cooling-levels = <0 100 150 200 255>;
-		#cooling-cells = <2>;
-		pwms = <&pwm0 0 50000 0>;
 	};
 };
 
@@ -180,7 +162,6 @@
 	cpu-supply = <&vdd_cpu>;
 };
 
-#ifdef DTS_NO_LEGACY
 &gpu {
 	mali-supply = <&vdd_gpu>;
 	status = "okay";
@@ -207,7 +188,6 @@
 &hdmi_sound {
 	status = "okay";
 };
-#endif
 
 &i2c0 {
 	status = "okay";
@@ -440,10 +420,6 @@
 				};
 			};
 		};
-
-		codec {
-			mic-in-differential;
-		};
 	};
 };
 
@@ -451,11 +427,9 @@
 	status = "okay";
 };
 
-#ifdef DTS_NO_LEGACY
 &i2s0_8ch {
 	status = "okay";
 };
-#endif
 
 &i2s1_8ch {
 	rockchip,trcm-sync-tx-only;
@@ -478,17 +452,6 @@
 	reset-gpios = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc3v3_pcie>;
 	status = "okay";
-
-	pcie@0,0 {
-		reg = <0x00100000 0 0 0 0>;
-		#address-cells = <3>;
-		#size-cells = <2>;
-
-		rtl8125_1: pcie-eth@10,0 {
-			compatible = "pci10ec,8125";
-			reg = <0x000000 0 0 0 0>;
-		};
-	};
 };
 
 &pcie3x2 {
@@ -496,17 +459,6 @@
 	reset-gpios = <&gpio2 RK_PD0 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc3v3_pcie>;
 	status = "okay";
-
-	pcie@0,0 {
-		reg = <0x00200000 0 0 0 0>;
-		#address-cells = <3>;
-		#size-cells = <2>;
-
-		rtl8125_2: pcie-eth@20,0 {
-			compatible = "pci10ec,8125";
-			reg = <0x000000 0 0 0 0>;
-		};
-	};
 };
 
 &pinctrl {
@@ -537,7 +489,7 @@
 	};
 
 	usb {
-		vcc5v0_usb_host_en: vcc5v0_usb_host_en {
+		vcc5v0_usb_otg_en: vcc5v0_usb_otg_en {
 			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
@@ -553,14 +505,6 @@
 	vccio5-supply = <&vcc_3v3>;
 	vccio6-supply = <&vcc_1v8>;
 	vccio7-supply = <&vcc_3v3>;
-	status = "okay";
-};
-
-&pwm0 {
-	status = "okay";
-};
-
-&rng {
 	status = "okay";
 };
 
@@ -589,7 +533,7 @@
 	disable-wp;
 	pinctrl-names = "default";
 	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
-	sd-uhs-sdr104;
+	sd-uhs-sdr50;
 	vmmc-supply = <&vcc3v3_sd>;
 	vqmmc-supply = <&vccio_sd>;
 	status = "okay";
@@ -630,7 +574,7 @@
 };
 
 &usb2phy0_host {
-	phy-supply = <&vcc5v0_usb_host>;
+	phy-supply = <&vcc5v0_usb_otg>;
 	status = "okay";
 };
 
@@ -639,16 +583,15 @@
 };
 
 &usb2phy1_host {
-	phy-supply = <&vcc5v0_usb_host>;
+	phy-supply = <&vcc5v0_usb_otg>;
 	status = "okay";
 };
 
 &usb2phy1_otg {
-	phy-supply = <&vcc5v0_usb_host>;
+	phy-supply = <&vcc5v0_usb_otg>;
 	status = "okay";
 };
 
-#ifdef DTS_NO_LEGACY
 &vop {
 	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
 	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
@@ -665,4 +608,3 @@
 		remote-endpoint = <&hdmi_in_vp0>;
 	};
 };
-#endif

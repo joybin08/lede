@@ -18,7 +18,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2551,9 +2551,13 @@ static void stmmac_bump_dma_threshold(st
+@@ -2536,9 +2536,13 @@ static void stmmac_bump_dma_threshold(st
   * @priv: driver private structure
   * @budget: napi budget limiting this functions packet handling
   * @queue: TX queue index
@@ -33,7 +33,7 @@ Signed-off-by: Paolo Abeni <pabeni@redhat.com>
  {
  	struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
  	struct stmmac_txq_stats *txq_stats = &priv->xstats.txq_stats[queue];
-@@ -2713,7 +2717,7 @@ static int stmmac_tx_clean(struct stmmac
+@@ -2698,7 +2702,7 @@ static int stmmac_tx_clean(struct stmmac
  
  	/* We still have pending packets, let's call for a new scheduling */
  	if (tx_q->dirty_tx != tx_q->cur_tx)
